@@ -17,7 +17,7 @@ int status = WL_IDLE_STATUS;                // the Wifi radio's status
 
 //web
 char webserver[] = "www.miklik.cz";
-int webport = 443;
+int webport = 80;
 
 // Initialize the Ethernet client object
 WiFiEspClient client;
