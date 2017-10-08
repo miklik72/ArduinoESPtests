@@ -2,6 +2,7 @@
 /* Test comunication from Arduino via ESP-01 */
 #include <Arduino.h>
 #include <WiFiEsp.h>
+#include <HTTPclient.h>
 
 // Emulate Serial1 on pins 6/7 if not present
 #ifndef HAVE_HWSERIAL1
@@ -18,9 +19,12 @@ int status = WL_IDLE_STATUS;                // the Wifi radio's status
 //web
 char webserver[] = "www.miklik.cz";
 int webport = 80;
+String content;
 
 // Initialize the Ethernet client object
 WiFiEspClient client;
+//HttpClient http();
+
 
 void printWifiStatus()
 {
@@ -67,15 +71,34 @@ void setup(){
   printWifiStatus();
 
   Serial.println();
+
+  content = "p0=10&p1=20&p2=30&p3=40";
+  Serial.println("POST /z3t/insert_test.php HTTP/1.1");
+  Serial.println("Host: www.miklik.cz");
+  Serial.println("Content-Type: application/x-www-form-urlencoded");
+  Serial.print("Content-Length: ");Serial.println(content.length());
+  Serial.println(content);
+
   Serial.println("Starting connection to server...");
   // if you get a connection, report back via serial
   if (client.connect(webserver, webport)) {
     Serial.println("Connected to server");
-    // Make a HTTP request
-    client.println("GET /test.txt HTTP/1.1");
-    client.println("Host: www.miklik.cz");
-    client.println("Connection: close");
+    client.println("POST /insert_test.php HTTP/1.1");
+    client.println("Host: z3t.miklik.cz");
+    //client.println("User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64;x64; rv:57.0) Gecko/20100101 Firefox/57.0");
+    //client.println("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    //client.println("Accept-Language: cs,en-GB;q=0.5");
+    //client.println("Accept-Encoding: gzip, deflate");
+    //client.println("Referer: http://www.miklik.cz/z3t/index.php");
+    client.println("Content-Type: application/x-www-form-urlencoded");
+    client.print("Content-Length: ");client.println(content.length());
+    //client.println("Connection: keep-alive");
+    //client.println("Upgrade-Insecure-Requests: 1");
     client.println();
+    client.println(content);
+    //client.println("Connection: close");
+    //client.println();
+
   }
 }
 
